@@ -215,7 +215,7 @@ impl ParsedMetar {
         let mut raw_vis: Vec<&str> =
             raw_vis.split("").filter(|&x| x != "" && x != " " && x != "S" && x != "M").collect();
 
-        if raw_vis.len() == 4 {
+        if raw_vis.len() == 4 && (raw_vis.contains(&"/") || raw_vis.contains(&".")) {
             raw_vis.insert(1, " ");
             raw_vis.join("")
         } else {
