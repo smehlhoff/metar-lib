@@ -8,24 +8,14 @@ fn metar_ksfo() {
     assert_eq!(metar.station, "KSFO");
     assert_eq!(metar.station_type, "");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 270,
-            speed: 24,
-            gust: true,
-            gust_speed: 33,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 270, speed: 24, gust_speed: 33, variable_speed: 0 });
     assert_eq!(metar.visibility, "10");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["FEW009", "SCT200"]);
     assert_eq!(metar.temp, 15);
     assert_eq!(metar.dew, 10);
     assert_eq!(metar.altimeter, 2999);
-    assert_eq!(metar.remarks.len(), 7);
+    assert_eq!(metar.remarks.len(), 6);
 }
 
 #[test]
@@ -35,24 +25,14 @@ fn metar_ktad() {
     assert_eq!(metar.station, "KTAD");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 54, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 240,
-            speed: 24,
-            gust: true,
-            gust_speed: 33,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 240, speed: 24, gust_speed: 33, variable_speed: 0 });
     assert_eq!(metar.visibility, "10");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["CAVOK"]);
     assert_eq!(metar.temp, 23);
     assert_eq!(metar.dew, 03);
     assert_eq!(metar.altimeter, 3011);
-    assert_eq!(metar.remarks.len(), 7);
+    assert_eq!(metar.remarks.len(), 6);
 }
 
 #[test]
@@ -65,24 +45,14 @@ fn metar_mgyf() {
     assert_eq!(metar.station, "KGYF");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(5, 15, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 100,
-            speed: 23,
-            gust: false,
-            gust_speed: 0,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 100, speed: 23, gust_speed: 0, variable_speed: 0 });
     assert_eq!(metar.visibility, "10");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["SCT019"]);
     assert_eq!(metar.temp, 27);
     assert_eq!(metar.dew, 23);
     assert_eq!(metar.altimeter, 3008);
-    assert_eq!(metar.remarks.len(), 3);
+    assert_eq!(metar.remarks.len(), 2);
 }
 
 #[test]
@@ -94,24 +64,14 @@ fn metar_kc83() {
     assert_eq!(metar.station, "KC83");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(5, 15, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 230,
-            speed: 22,
-            gust: true,
-            gust_speed: 31,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 230, speed: 22, gust_speed: 31, variable_speed: 0 });
     assert_eq!(metar.visibility, "10");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["CAVOK"]);
     assert_eq!(metar.temp, 16);
     assert_eq!(metar.dew, 11);
     assert_eq!(metar.altimeter, 2995);
-    assert_eq!(metar.remarks.len(), 2);
+    assert_eq!(metar.remarks.len(), 1);
 }
 
 #[test]
@@ -124,24 +84,14 @@ fn metar_kedw() {
     assert_eq!(metar.station, "KEDW");
     assert_eq!(metar.station_type, "");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 58, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 240,
-            speed: 11,
-            gust: false,
-            gust_speed: 0,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 240, speed: 11, gust_speed: 0, variable_speed: 0 });
     assert_eq!(metar.visibility, "50");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["SCT250", "BKN350"]);
     assert_eq!(metar.temp, 24);
     assert_eq!(metar.dew, 06);
     assert_eq!(metar.altimeter, 2988);
-    assert_eq!(metar.remarks.len(), 4);
+    assert_eq!(metar.remarks.len(), 3);
 }
 
 #[test]
@@ -151,24 +101,14 @@ fn metar_kqb4() {
     assert_eq!(metar.station, "KQB4");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 0 });
     assert_eq!(metar.visibility, "9000");
     assert_eq!(metar.weather, vec!["HZ"]);
     assert_eq!(metar.clouds, vec!["FEW095"]);
     assert_eq!(metar.temp, 32);
     assert_eq!(metar.dew, 03);
     assert_eq!(metar.altimeter, 2986);
-    assert_eq!(metar.remarks.len(), 7);
+    assert_eq!(metar.remarks.len(), 6);
 }
 
 #[test]
@@ -178,54 +118,34 @@ fn metar_kqb3() {
     assert_eq!(metar.station, "KQD3");
     assert_eq!(metar.station_type, "");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: true,
-            variable_speed: 6
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 6 });
     assert_eq!(metar.visibility, "9000");
     assert_eq!(metar.weather, vec!["HZ"]);
     assert_eq!(metar.clouds, vec!["FEW150"]);
     assert_eq!(metar.temp, 38);
     assert_eq!(metar.dew, 15);
     assert_eq!(metar.altimeter, 2970);
-    assert_eq!(metar.remarks.len(), 12);
+    assert_eq!(metar.remarks.len(), 11);
 }
 
 #[test]
 fn metar_kqay() {
     let metar = ParsedMetar::parse_data(
-        "KQAY 160456Z AUTO 00000KT 9999 CAVOK 40/M01 A2957 RMK AO2 SLP013 WND DATA ESTMD T03991008",
+        "KQAY 160456Z AUTO 00000KT 9999 CAVOK M03/M01 A2957 RMK AO2 SLP013 WND DATA ESTMD T03991008",
     )
     .unwrap();
 
     assert_eq!(metar.station, "KQAY");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 0 });
     assert_eq!(metar.visibility, "9999");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["CAVOK"]);
-    assert_eq!(metar.temp, 40);
+    assert_eq!(metar.temp, -3);
     assert_eq!(metar.dew, -1);
     assert_eq!(metar.altimeter, 2957);
-    assert_eq!(metar.remarks.len(), 7);
+    assert_eq!(metar.remarks.len(), 6);
 }
 
 #[test]
@@ -238,24 +158,14 @@ fn metar_k0co() {
     assert_eq!(metar.station, "K0CO");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(5, 0, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 0 });
     assert_eq!(metar.visibility, "10");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["CAVOK"]);
     assert_eq!(metar.temp, 07);
     assert_eq!(metar.dew, 0);
     assert_eq!(metar.altimeter, 3058);
-    assert_eq!(metar.remarks.len(), 4);
+    assert_eq!(metar.remarks.len(), 3);
 }
 
 #[test]
@@ -268,24 +178,14 @@ fn metar_kmlp() {
     assert_eq!(metar.station, "KMLP");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(5, 22, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: true,
-            variable_speed: 3
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 3 });
     assert_eq!(metar.visibility, "2");
     assert_eq!(metar.weather, vec!["BR"]);
     assert_eq!(metar.clouds, vec!["BKN004", "BKN013", "OVC019"]);
     assert_eq!(metar.temp, 3);
     assert_eq!(metar.dew, 3);
     assert_eq!(metar.altimeter, 2996);
-    assert_eq!(metar.remarks.len(), 4);
+    assert_eq!(metar.remarks.len(), 3);
 }
 
 #[test]
@@ -295,24 +195,14 @@ fn metar_kqbt() {
     assert_eq!(metar.station, "KQBT");
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 55, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 40,
-            speed: 14,
-            gust: true,
-            gust_speed: 20,
-            variable: false,
-            variable_speed: 0
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 40, speed: 14, gust_speed: 20, variable_speed: 0 });
     assert_eq!(metar.visibility, "9999");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["CAVOK"]);
     assert_eq!(metar.temp, 39);
     assert_eq!(metar.dew, -8);
     assert_eq!(metar.altimeter, 2963);
-    assert_eq!(metar.remarks.len(), 9);
+    assert_eq!(metar.remarks.len(), 8);
 }
 
 #[test]
@@ -325,22 +215,12 @@ fn metar_kqaj() {
     assert_eq!(metar.station, "KQAJ");
     assert_eq!(metar.station_type, "");
     assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 58, 0));
-    assert_eq!(
-        metar.wind,
-        Wind {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: true,
-            variable_speed: 4
-        }
-    );
+    assert_eq!(metar.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 4 });
     assert_eq!(metar.visibility, "9999");
     assert_eq!(metar.weather.len(), 0);
     assert_eq!(metar.clouds, vec!["CAVOK"]);
     assert_eq!(metar.temp, 38);
     assert_eq!(metar.dew, -1);
     assert_eq!(metar.altimeter, 2960);
-    assert_eq!(metar.remarks.len(), 8);
+    assert_eq!(metar.remarks.len(), 7);
 }

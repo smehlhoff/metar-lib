@@ -77,22 +77,13 @@ pub struct ParsedMetar {
 pub struct Wind {
     pub direction: i32,
     pub speed: i32,
-    pub gust: bool,
     pub gust_speed: i32,
-    pub variable: bool,
     pub variable_speed: i32,
 }
 
 impl Wind {
     const fn new() -> Self {
-        Self {
-            direction: 0,
-            speed: 0,
-            gust: false,
-            gust_speed: 0,
-            variable: false,
-            variable_speed: 0,
-        }
+        Self { direction: 0, speed: 0, gust_speed: 0, variable_speed: 0 }
     }
 }
 
@@ -122,12 +113,14 @@ impl ParsedMetar {
                     r"(?P<type>AUTO\s|COR\s)?",
                     r"(?P<wind>VRB\d{2}KT|\d{5}KT|\d{5}G\d{2}KT)\s",
                     r"(?P<variable>\d{3}V\d{3}\s)?",
-                    r"(?P<vis>\d{4}|\d{3}SM|\d{2}SM|\d{1}SM|\d{1}\s\d{1}/\d{1}SM|\d{1}/\d{1}SM|\d{1}\s\d{1}.\d{1}SM)\s",
+                    r"(?P<vis>\d{4}|\d{3}SM|\d{2}SM|\d{1}SM|\d{1}\s\d{1}/\d{1}SM|\d{1}/\d{1}SM
+                        |\d{1}\s\d{1}.\d+SM|\d{1}.\d+SM)?\s",
                     r"(?P<weather>.+\s)",
                     r"(?P<temp>\d{2}|M\d{2})/(?P<dew>\d{2}|M\d{2})\s",
                     r"(?P<alt>A\d{4}\s)?",
-                    r"(?P<remarks>RMK.+|RMK)?"
-                ].join("");
+                    r"(?P<remarks>RMK.+|RMK)?",
+                ]
+                .join("");
 
                 Regex::new(&pattern).unwrap()
             };
@@ -137,12 +130,9 @@ impl ParsedMetar {
             let station = data["station"].to_string();
             let time = Self::parse_time(&data["time"]);
             let wind = Self::parse_wind(&data["wind"]);
-            let visibility = Self::parse_vis(&data["vis"]);
             let (weather, clouds) = Self::parse_weather(&data["weather"])?;
             let temp = Self::parse_temp(&data["temp"]);
             let dew = Self::parse_dew(&data["dew"]);
-            let altimeter = Self::parse_alt(&data["alt"]);
-            let remarks = Self::parse_remarks(&data["remarks"]);
 
             let station_type = match data.name("type") {
                 Some(_) => match data["type"].as_ref() {
@@ -151,6 +141,21 @@ impl ParsedMetar {
                     _ => String::from(""),
                 },
                 None => String::from(""),
+            };
+
+            let visibility = match data.name("vis") {
+                Some(_) => Self::parse_vis(&data["vis"]),
+                None => String::from(""),
+            };
+
+            let altimeter = match data.name("alt") {
+                Some(_) => Self::parse_alt(&data["alt"]),
+                None => 0,
+            };
+
+            let remarks = match data.name("remarks") {
+                Some(_) => Self::parse_remarks(&data["remarks"]),
+                None => Vec::new(),
             };
 
             Ok(Self {
@@ -189,22 +194,16 @@ impl ParsedMetar {
             Wind {
                 direction: 0,
                 speed: 0,
-                gust: false,
                 gust_speed: 0,
-                variable: true,
                 variable_speed: raw_wind[3..5].join("").parse::<i32>().unwrap(),
             }
         } else {
             let direction = raw_wind[0..3].join("").parse::<i32>().unwrap();
             let speed = raw_wind[3..5].join("").parse::<i32>().unwrap();
+            let gust_speed =
+                if raw_wind.len() > 5 { raw_wind[5..].join("").parse::<i32>().unwrap() } else { 0 };
 
-            let (gust, gust_speed) = if raw_wind.len() > 5 {
-                (true, raw_wind[5..].join("").parse::<i32>().unwrap())
-            } else {
-                (false, 0)
-            };
-
-            Wind { direction, speed, gust, gust_speed, variable: false, variable_speed: 0 }
+            Wind { direction, speed, gust_speed, variable_speed: 0 }
         }
     }
 
@@ -215,7 +214,7 @@ impl ParsedMetar {
         let mut raw_vis: Vec<&str> =
             raw_vis.split("").filter(|&x| x != "" && x != " " && x != "S" && x != "M").collect();
 
-        if raw_vis.len() == 4 && (raw_vis.contains(&"/") || raw_vis.contains(&".")) {
+        if raw_vis.len() >= 4 && (raw_vis[2] == "/" || raw_vis[2] == ".") {
             raw_vis.insert(1, " ");
             raw_vis.join("")
         } else {
@@ -250,28 +249,28 @@ impl ParsedMetar {
     }
 
     fn parse_weather(raw_weather: &str) -> Result<(Vec<String>, Vec<String>), Box<dyn Error>> {
-        let mut raw_weather: Vec<&str> = raw_weather.split(' ').collect();
+        let mut raw_weather: Vec<&str> = raw_weather.split(' ').filter(|&x| x != "").collect();
         let mut clouds: Vec<String> = Vec::new();
 
         lazy_static! {
             static ref RE: Regex = {
                 let pattern = [
-                    "(?P<clouds>",
-                    "FEW\\d{3}CB",
-                    "|FEW\\d{3}TCU",
-                    "|FEW\\d{3}",
-                    "|SCT\\d{3}CB",
-                    "|SCT\\d{3}TCU",
-                    "|SCT\\d{3}",
-                    "|BKN\\d{3}CB",
-                    "|BKN\\d{3}TCU",
-                    "|BKN\\d{3}",
-                    "|OVC\\d{3}CB",
-                    "|OVC\\d{3}TCU",
-                    "|OVC\\d{3}",
-                    "|CAVOK",
-                    "|CLR",
-                    "|SKC)",
+                    r"(?P<clouds>",
+                    r"FEW\d{3}CB",
+                    r"|FEW\d{3}TCU",
+                    r"|FEW\d{3}",
+                    r"|SCT\d{3}CB",
+                    r"|SCT\d{3}TCU",
+                    r"|SCT\d{3}",
+                    r"|BKN\d{3}CB",
+                    r"|BKN\d{3}TCU",
+                    r"|BKN\d{3}",
+                    r"|OVC\d{3}CB",
+                    r"|OVC\d{3}TCU",
+                    r"|OVC\d{3}",
+                    r"|CAVOK",
+                    r"|CLR",
+                    r"|SKC)",
                 ]
                 .join("");
 
@@ -294,6 +293,6 @@ impl ParsedMetar {
     }
 
     fn parse_remarks(raw_remarks: &str) -> Vec<String> {
-        raw_remarks.split(' ').map(str::to_string).collect()
+        raw_remarks.split(' ').map(str::to_string).filter(|x| x != "RMK").collect()
     }
 }
