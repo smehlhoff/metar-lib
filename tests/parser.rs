@@ -3,7 +3,11 @@ use metar_cli::*;
 
 #[test]
 fn metar_ksfo() {
-    let metar = ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2 PK WND 27035/0442 SLP155 T01500100").unwrap();
+    let metar = ParsedMetar::parse_data(
+        "KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2 PK WND 27035/0442 SLP155 \
+         T01500100",
+    )
+    .unwrap();
 
     assert_eq!(metar.station, "KSFO");
     assert_eq!(metar.station_type, "");
@@ -20,7 +24,11 @@ fn metar_ksfo() {
 
 #[test]
 fn metar_ktad() {
-    let metar = ParsedMetar::parse_data("KTAD 160454Z AUTO 24024G33KT 10SM CAVOK 23/03 A3011 RMK AO2 PK WND 24033/0450 SLP097 T02330033").unwrap();
+    let metar = ParsedMetar::parse_data(
+        "KTAD 160454Z AUTO 24024G33KT 10SM CAVOK 23/03 A3011 RMK AO2 PK WND 24033/0450 SLP097 \
+         T02330033",
+    )
+    .unwrap();
 
     assert_eq!(metar.station, "KTAD");
     assert_eq!(metar.station_type, "AUTO");
@@ -96,7 +104,11 @@ fn metar_kedw() {
 
 #[test]
 fn metar_kqb4() {
-    let metar = ParsedMetar::parse_data("KQB4 160456Z AUTO 00000KT 9000 HZ FEW095 32/03 A2986 RMK AO2 SLP080 WND DATA ESTMD T03180027").unwrap();
+    let metar = ParsedMetar::parse_data(
+        "KQB4 160456Z AUTO 00000KT 9000 HZ FEW095 32/03 A2986 RMK AO2 SLP080 WND DATA ESTMD \
+         T03180027",
+    )
+    .unwrap();
 
     assert_eq!(metar.station, "KQB4");
     assert_eq!(metar.station_type, "AUTO");
@@ -113,7 +125,11 @@ fn metar_kqb4() {
 
 #[test]
 fn metar_kqb3() {
-    let metar = ParsedMetar::parse_data("KQD3 160456Z VRB06KT 9000 HZ FEW150 38/15 A2970 RMK AO2 SLPNO WND DATA ESTMD T03780150 10351 20299 51013 PWINO $").unwrap();
+    let metar = ParsedMetar::parse_data(
+        "KQD3 160456Z VRB06KT 9000 HZ FEW150 38/15 A2970 RMK AO2 SLPNO WND DATA ESTMD T03780150 \
+         10351 20299 51013 PWINO $",
+    )
+    .unwrap();
 
     assert_eq!(metar.station, "KQD3");
     assert_eq!(metar.station_type, "");
@@ -131,7 +147,8 @@ fn metar_kqb3() {
 #[test]
 fn metar_kqay() {
     let metar = ParsedMetar::parse_data(
-        "KQAY 160456Z AUTO 00000KT 9999 CAVOK M03/M01 A2957 RMK AO2 SLP013 WND DATA ESTMD T03991008",
+        "KQAY 160456Z AUTO 00000KT 9999 CAVOK M03/M01 A2957 RMK AO2 SLP013 WND DATA ESTMD \
+         T03991008",
     )
     .unwrap();
 
@@ -190,7 +207,11 @@ fn metar_kmlp() {
 
 #[test]
 fn metar_kqbt() {
-    let metar = ParsedMetar::parse_data("KQBT 160455Z AUTO 04014G20KT 9999 CAVOK 39/M08 A2963 RMK AO2 SLP938 WND DATA ESTMD T03851079 TS $").unwrap();
+    let metar = ParsedMetar::parse_data(
+        "KQBT 160455Z AUTO 04014G20KT 9999 CAVOK 39/M08 A2963 RMK AO2 SLP938 WND DATA ESTMD \
+         T03851079 TS $",
+    )
+    .unwrap();
 
     assert_eq!(metar.station, "KQBT");
     assert_eq!(metar.station_type, "AUTO");

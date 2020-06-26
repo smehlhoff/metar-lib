@@ -1,7 +1,8 @@
 use metar_cli::*;
 
 fn main() {
-    let metar = Metar::parse("metars/KSFO.TXT");
+    let code = "KSJC";
 
-    println!("{:#?}", metar);
+    println!("{:?}", Metar::raw(code));
+    println!("{:#?}", Metar::parse(code));
 }
