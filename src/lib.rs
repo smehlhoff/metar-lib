@@ -139,7 +139,7 @@ impl ParsedMetar {
             };
 
             let wind_variation = match data.name("wind_variation") {
-                Some(_) => Self::parse_variable(&data["wind_variation"]),
+                Some(_) => Self::parse_wind_variation(&data["wind_variation"]),
                 None => String::from(""),
             };
 
@@ -209,7 +209,7 @@ impl ParsedMetar {
         }
     }
 
-    fn parse_variable(raw_wind_variation: &str) -> String {
+    fn parse_wind_variation(raw_wind_variation: &str) -> String {
         let wind_variation: Vec<&str> =
             raw_wind_variation.split(' ').filter(|&x| x != "").collect();
 
