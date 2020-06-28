@@ -103,7 +103,7 @@ impl ParsedMetar {
                 let pattern = [
                     r"(?P<station>[A-Z0-9]{4})\s",
                     r"(?P<time>\d{6}Z)\s",
-                    r"(?P<type>AUTO\s|COR\s)?",
+                    r"(?P<station_type>AUTO\s|COR\s)?",
                     r"(?P<wind>VRB\d{2}KT|\d{5}KT|\d{5}G\d{2}KT)\s",
                     r"(?P<wind_variation>\d{3}V\d{3}\s)?",
                     r"(?P<vis>\d{4}|\d{3}SM|\d{2}SM|\d{1}SM|\d{1}\s\d{1}/\d{1}SM|\d{1}/\d{1}SM
@@ -129,8 +129,8 @@ impl ParsedMetar {
             let temp = Self::parse_temp(&data["temp"]);
             let dew = Self::parse_dew(&data["dew"]);
 
-            let station_type = match data.name("type") {
-                Some(_) => match data["type"].as_ref() {
+            let station_type = match data.name("station_type") {
+                Some(_) => match data["station_type"].as_ref() {
                     "AUTO " => String::from("AUTO"),
                     "COR " => String::from("COR"),
                     _ => String::from(""),
