@@ -1,8 +1,7 @@
 use metar_cli::*;
 
 fn main() {
-    let code = "KSJC";
+    let metar = "KSFO";
 
-    println!("{:?}", Metar::raw(code));
-    println!("{:#?}", Metar::parse(code));
+    println!("{:#?}", Metar::parse(metar));
 }

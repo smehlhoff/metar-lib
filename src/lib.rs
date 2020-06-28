@@ -10,12 +10,12 @@ extern crate lazy_static;
 use chrono::prelude::*;
 use regex::Regex;
 use std::error::Error;
-use std::io::{BufWriter, Read, Write};
-use std::{fmt, fs};
+use std::fmt;
 
 #[derive(Debug, PartialEq)]
 pub struct Metar {
     pub raw_data: String,
+    pub data: ParsedMetar,
 }
 
 impl fmt::Display for Metar {
@@ -25,27 +25,14 @@ impl fmt::Display for Metar {
 }
 
 impl Metar {
-    pub fn parse(code: &str) -> Result<ParsedMetar, Box<dyn Error>> {
-        let raw_data = Self::fetch_data(code)?;
+    pub fn parse(code: &str) -> Result<Self, Box<dyn Error>> {
+        let mut raw_data = Self::fetch_data(code)?;
 
-        Self::save_data(code, &raw_data)?;
+        raw_data = Self::split_data(code, &raw_data)?;
 
-        let mut file = fs::File::open(format!("metars/{}.TXT", code))?;
-        let raw_data = Self::split_data(&mut file)?;
-        let metar = ParsedMetar::parse_data(&raw_data)?;
+        let data = ParsedMetar::parse_data(&raw_data)?;
 
-        Ok(metar)
-    }
-
-    pub fn raw(code: &str) -> Result<Self, Box<dyn Error>> {
-        let raw_data = Self::fetch_data(code)?;
-
-        Self::save_data(code, &raw_data)?;
-
-        let mut file = fs::File::open(format!("metars/{}.TXT", code))?;
-        let raw_data = Self::split_data(&mut file)?;
-
-        Ok(Self { raw_data })
+        Ok(Self { raw_data, data })
     }
 
     fn fetch_data(code: &str) -> Result<String, Box<dyn Error>> {
@@ -56,34 +43,15 @@ impl Metar {
         Ok(resp)
     }
 
-    fn save_data(code: &str, raw_data: &str) -> Result<(), Box<dyn Error>> {
-        let path = format!("metars/{}.TXT", code);
-        let file = fs::OpenOptions::new().create(true).write(true).open(path)?;
-        let mut buf_reader = BufWriter::new(file);
+    fn split_data(code: &str, raw_data: &str) -> Result<String, Box<dyn Error>> {
+        let raw_data: Vec<&str> =
+            raw_data.split('\n').filter(|&x| x != "" && x.contains(code)).collect();
 
-        buf_reader.write_all(raw_data.as_bytes())?;
-
-        Ok(())
-    }
-
-    fn read_data(file: &mut fs::File) -> Result<String, Box<dyn Error>> {
-        let mut raw_data = String::new();
-
-        file.read_to_string(&mut raw_data)?;
-
-        Ok(raw_data)
-    }
-
-    fn split_data(file: &mut fs::File) -> Result<String, Box<dyn Error>> {
-        let raw_data = Self::read_data(file)?;
-        let values: Vec<Vec<&str>> =
-            raw_data.lines().skip(1).map(|line| line.split_whitespace().collect()).collect();
-
-        Ok(values[0].join(" "))
+        Ok(raw_data[0].to_string())
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ParsedMetar {
     pub station: String,
     pub station_type: String,
