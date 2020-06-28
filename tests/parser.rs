@@ -118,11 +118,11 @@ fn metar_vis() {
 #[test]
 fn metar_rvr() {
     let metar = ParsedMetar::parse_data(
-        "KSFO 160456Z 27024G33KT 10SM R06R/4000FT/D FEW009 SCT200 15/10 A2999 RMK AO2",
+        "KSFO 160456Z 27024G33KT 10SM R28/4000FT/D FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
 
-    assert_eq!(metar.rvr, "R06R/4000FT/D")
+    assert_eq!(metar.rvr, "R28/4000FT/D")
 }
 
 #[test]
@@ -187,4 +187,23 @@ fn metar_remarks() {
 
     assert_eq!(metar.remarks.len(), 1);
     assert_eq!(metar2.remarks.len(), 0);
+}
+
+#[test]
+fn metar_full_report() {
+    let metar = ParsedMetar::parse_data("KSFO 160456Z AUTO 27024G33KT 280V300 10SM R28/4000FT/D +FG TSRA BKN008 OVC040 00/M08 A2992 RMK AO2").unwrap();
+
+    assert_eq!(metar.station, "KSFO");
+    assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
+    assert_eq!(metar.station_type, "AUTO");
+    assert_eq!(metar.wind, Wind { direction: 270, speed: 24, gust_speed: 33, variable_speed: 0 });
+    assert_eq!(metar.wind_variation, "280V300");
+    assert_eq!(metar.vis, "10");
+    assert_eq!(metar.rvr, "R28/4000FT/D");
+    assert_eq!(metar.weather, vec!["+FG", "TSRA"]);
+    assert_eq!(metar.clouds, vec!["BKN008", "OVC040"]);
+    assert_eq!(metar.temp, 0);
+    assert_eq!(metar.dew, -8);
+    assert_eq!(metar.alt, 2992);
+    assert_eq!(metar.remarks.len(), 1);
 }
