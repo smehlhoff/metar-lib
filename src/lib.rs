@@ -25,13 +25,22 @@ impl fmt::Display for Metar {
 
 impl Metar {
     pub fn parse(code: &str) -> Result<Self, Error> {
-        let mut raw_data = Self::fetch_data(code)?;
+        let code = Self::check_code(code)?;
+        let mut raw_data = Self::fetch_data(&code)?;
 
-        raw_data = Self::split_data(code, &raw_data);
+        raw_data = Self::split_data(&code, &raw_data);
 
         let data = ParsedMetar::parse_data(&raw_data)?;
 
         Ok(Self { raw_data, data })
+    }
+
+    fn check_code(code: &str) -> Result<String, Error> {
+        if code.len() == 4 {
+            Ok(code.to_uppercase())
+        } else {
+            Err(Error::Invalid("METAR not valid.".into()))
+        }
     }
 
     fn fetch_data(code: &str) -> Result<String, Error> {
