@@ -2,11 +2,13 @@
 #![warn(clippy::pedantic)]
 #![warn(clippy::nursery)]
 
+pub mod error;
+
 #[macro_use]
 extern crate lazy_static;
 use chrono::prelude::*;
+use error::Error;
 use regex::Regex;
-use std::error::Error;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
@@ -22,28 +24,32 @@ impl fmt::Display for Metar {
 }
 
 impl Metar {
-    pub fn parse(code: &str) -> Result<Self, Box<dyn Error>> {
+    pub fn parse(code: &str) -> Result<Self, Error> {
         let mut raw_data = Self::fetch_data(code)?;
 
-        raw_data = Self::split_data(code, &raw_data)?;
+        raw_data = Self::split_data(code, &raw_data);
 
         let data = ParsedMetar::parse_data(&raw_data)?;
 
         Ok(Self { raw_data, data })
     }
 
-    fn fetch_data(code: &str) -> Result<String, Box<dyn Error>> {
+    fn fetch_data(code: &str) -> Result<String, Error> {
         let url =
             format!("https://tgftp.nws.noaa.gov/data/observations/metar/stations/{}.TXT", code);
         let resp = reqwest::blocking::get(&url)?.text()?;
 
-        Ok(resp)
+        if resp.contains("The requested URL") {
+            Err(Error::NotFound("METAR not found.".into()))
+        } else {
+            Ok(resp)
+        }
     }
 
-    fn split_data(code: &str, raw_data: &str) -> Result<String, Box<dyn Error>> {
+    fn split_data(code: &str, raw_data: &str) -> String {
         let raw_data: Vec<&str> = raw_data.split('\n').filter(|&x| x.contains(code)).collect();
 
-        Ok(raw_data[0].to_string())
+        raw_data[0].to_string()
     }
 }
 
@@ -97,7 +103,7 @@ impl ParsedMetar {
         }
     }
 
-    pub fn parse_data(raw_data: &str) -> Result<Self, Box<dyn Error>> {
+    pub fn parse_data(raw_data: &str) -> Result<Self, Error> {
         lazy_static! {
             static ref RE: Regex = {
                 let pattern = [
@@ -122,13 +128,13 @@ impl ParsedMetar {
 
         if let Some(data) = RE.captures(raw_data) {
             let station = data["station"].to_string();
-            let time = Self::parse_time(&data["time"]);
+            let time = Self::parse_time(&data["time"])?;
             let station_type = match data.name("station_type") {
                 Some(_) => Self::parse_vis(&data["station_type"]),
                 None => String::from(""),
             };
             let wind = match data.name("wind") {
-                Some(_) => Self::parse_wind(&data["wind"]),
+                Some(_) => Self::parse_wind(&data["wind"])?,
                 None => Wind::new(),
             };
             let wind_variation = match data.name("wind_variation") {
@@ -144,10 +150,10 @@ impl ParsedMetar {
                 None => String::from(""),
             };
             let (weather, clouds) = Self::parse_weather(&data["weather"])?;
-            let temp = Self::parse_temp(&data["temp"]);
-            let dew = Self::parse_dew(&data["dew"]);
+            let temp = Self::parse_temp(&data["temp"])?;
+            let dew = Self::parse_dew(&data["dew"])?;
             let alt = match data.name("alt") {
-                Some(_) => Self::parse_alt(&data["alt"]),
+                Some(_) => Self::parse_alt(&data["alt"])?,
                 None => 0,
             };
             let remarks = match data.name("remarks") {
@@ -175,34 +181,33 @@ impl ParsedMetar {
         }
     }
 
-    fn parse_time(raw_time: &str) -> DateTime<Utc> {
+    fn parse_time(raw_time: &str) -> Result<DateTime<Utc>, Error> {
         let time: Vec<&str> = raw_time.split("").filter(|&x| x != "" && x != "Z").collect();
         let utc = Utc::now();
-        let day = time[0..2].join("").parse::<u32>().unwrap();
-        let hour = time[2..4].join("").parse::<u32>().unwrap();
-        let min = time[4..6].join("").parse::<u32>().unwrap();
+        let day = time[0..2].join("").parse::<u32>()?;
+        let hour = time[2..4].join("").parse::<u32>()?;
+        let min = time[4..6].join("").parse::<u32>()?;
 
-        Utc.ymd(utc.year(), utc.month(), day).and_hms(hour, min, 0)
+        Ok(Utc.ymd(utc.year(), utc.month(), day).and_hms(hour, min, 0))
     }
 
-    fn parse_wind(raw_wind: &str) -> Wind {
+    fn parse_wind(raw_wind: &str) -> Result<Wind, Error> {
         let wind: Vec<&str> =
             raw_wind.split("").filter(|&x| x != "" && x != "K" && x != "T" && x != "G").collect();
 
         if wind[0].contains('V') {
-            Wind {
+            Ok(Wind {
                 direction: 0,
                 speed: 0,
                 gust_speed: 0,
-                variable_speed: wind[3..5].join("").parse::<i32>().unwrap(),
-            }
+                variable_speed: wind[3..5].join("").parse::<i32>()?,
+            })
         } else {
-            let direction = wind[0..3].join("").parse::<i32>().unwrap();
-            let speed = wind[3..5].join("").parse::<i32>().unwrap();
-            let gust_speed =
-                if wind.len() > 5 { wind[5..].join("").parse::<i32>().unwrap() } else { 0 };
+            let direction = wind[0..3].join("").parse::<i32>()?;
+            let speed = wind[3..5].join("").parse::<i32>()?;
+            let gust_speed = if wind.len() > 5 { wind[5..].join("").parse::<i32>()? } else { 0 };
 
-            Wind { direction, speed, gust_speed, variable_speed: 0 }
+            Ok(Wind { direction, speed, gust_speed, variable_speed: 0 })
         }
     }
 
@@ -218,33 +223,33 @@ impl ParsedMetar {
         }
     }
 
-    fn parse_temp(raw_temp: &str) -> i32 {
+    fn parse_temp(raw_temp: &str) -> Result<i32, Error> {
         let temp: Vec<&str> = raw_temp.split("").filter(|&x| x != "").collect();
 
         if temp[0] == "M" {
-            -temp[1..].join("").parse::<i32>().unwrap()
+            Ok(-temp[1..].join("").parse::<i32>()?)
         } else {
-            temp[0..2].join("").parse::<i32>().unwrap()
+            Ok(temp[0..2].join("").parse::<i32>()?)
         }
     }
 
-    fn parse_dew(raw_dew: &str) -> i32 {
+    fn parse_dew(raw_dew: &str) -> Result<i32, Error> {
         let dew: Vec<&str> = raw_dew.split("").filter(|&x| x != "").collect();
 
         if dew[0] == "M" {
-            -dew[1..].join("").parse::<i32>().unwrap()
+            Ok(-dew[1..].join("").parse::<i32>()?)
         } else {
-            dew[0..2].join("").parse::<i32>().unwrap()
+            Ok(dew[0..2].join("").parse::<i32>()?)
         }
     }
 
-    fn parse_alt(raw_alt: &str) -> i32 {
+    fn parse_alt(raw_alt: &str) -> Result<i32, Error> {
         let alt: Vec<&str> = raw_alt.split("").filter(|&x| x != "A").collect();
 
-        alt[0..].join("").parse::<i32>().unwrap()
+        Ok(alt[0..].join("").parse::<i32>()?)
     }
 
-    fn parse_weather(raw_weather: &str) -> Result<(Vec<String>, Vec<String>), Box<dyn Error>> {
+    fn parse_weather(raw_weather: &str) -> Result<(Vec<String>, Vec<String>), Error> {
         let mut raw_weather: Vec<&str> = raw_weather.split(' ').filter(|&x| x != "").collect();
         let mut clouds: Vec<String> = Vec::new();
 
