@@ -13,7 +13,7 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::Invalid(ref err) | Self::NotFound(ref err) => write!(f,"{}", err),
+            Self::Invalid(ref err) | Self::NotFound(ref err) => write!(f, "{}", err),
             Self::ParseInt(ref err) => write!(f, "{}", err),
             Self::Regex(ref err) => write!(f, "{}", err),
             Self::Reqwest(ref err) => write!(f, "{}", err),
