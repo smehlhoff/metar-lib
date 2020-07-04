@@ -15,8 +15,9 @@ fn metar_time() {
     let metar =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
+    let utc = Utc::now(); // simulate metar was pulled now
 
-    assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
+    assert_eq!(metar.time, Utc.ymd(utc.year(), utc.month(), 16).and_hms(4, 56, 0));
 }
 
 #[test]
@@ -192,9 +193,10 @@ fn metar_remarks() {
 #[test]
 fn metar_full_report() {
     let metar = ParsedMetar::parse_data("KSFO 160456Z AUTO 27024G33KT 280V300 10SM R28/4000FT/D +FG TSRA BKN008 OVC040 00/M08 A2992 RMK AO2").unwrap();
+    let utc = Utc::now(); // simulate metar was pulled now
 
     assert_eq!(metar.station, "KSFO");
-    assert_eq!(metar.time, Utc.ymd(2020, 06, 16).and_hms(4, 56, 0));
+    assert_eq!(metar.time, Utc.ymd(utc.year(), utc.month(), 16).and_hms(4, 56, 0));
     assert_eq!(metar.station_type, "AUTO");
     assert_eq!(metar.wind, Wind { direction: 270, speed: 24, gust_speed: 33, variable_speed: 0 });
     assert_eq!(metar.wind_variation, "280V300");
