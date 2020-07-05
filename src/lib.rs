@@ -36,8 +36,14 @@ impl Metar {
     }
 
     fn check_code(code: &str) -> Result<String, Error> {
+        let code = code.to_uppercase();
+
         if code.len() == 4 {
-            Ok(code.to_uppercase())
+            if code.starts_with("K") {
+                Ok(code)
+            } else {
+                Err(Error::Invalid("U.S. METARs only.".into()))
+            }
         } else {
             Err(Error::Invalid("METAR not valid.".into()))
         }

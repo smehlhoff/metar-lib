@@ -14,7 +14,7 @@ TODO
 
 ## Limitations
 
-North American METARs only.
+This library parses U.S. METARs only (e.g., KSFO, KJFK).
 
 Please open an issue if you find a METAR string that doesn't work.
 
