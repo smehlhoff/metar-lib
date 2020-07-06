@@ -1,4 +1,4 @@
-use metar_cli::*;
+use metar_lib::*;
 use std::env;
 
 fn main() {

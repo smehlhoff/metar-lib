@@ -39,7 +39,7 @@ impl Metar {
         let code = code.to_uppercase();
 
         if code.len() == 4 {
-            if code.starts_with("K") {
+            if code.starts_with('K') {
                 Ok(code)
             } else {
                 Err(Error::Invalid("U.S. METARs only.".into()))
@@ -100,24 +100,6 @@ impl Wind {
 }
 
 impl ParsedMetar {
-    fn new() -> Self {
-        Self {
-            station: String::from(""),
-            time: Utc::now(),
-            station_type: String::from(""),
-            wind: Wind::new(),
-            wind_variation: String::from(""),
-            vis: String::from(""),
-            rvr: String::from(""),
-            weather: Vec::new(),
-            clouds: Vec::new(),
-            temp: 0,
-            dew: 0,
-            alt: 0,
-            remarks: Vec::new(),
-        }
-    }
-
     pub fn parse_data(raw_data: &str) -> Result<Self, Error> {
         lazy_static! {
             static ref RE: Regex = {
@@ -192,7 +174,7 @@ impl ParsedMetar {
                 remarks,
             })
         } else {
-            Ok(Self::new())
+            Err(Error::Invalid("Unable to parse METAR.".into()))
         }
     }
 

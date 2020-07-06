@@ -1,5 +1,5 @@
 use chrono::prelude::*;
-use metar_cli::*;
+use metar_lib::*;
 
 #[test]
 fn metar_station() {
@@ -15,7 +15,7 @@ fn metar_time() {
     let metar =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-    let utc = Utc::now(); // simulate metar was pulled now
+    let utc = Utc::now();
 
     assert_eq!(metar.time, Utc.ymd(utc.year(), utc.month(), 16).and_hms(4, 56, 0));
 }
@@ -160,7 +160,6 @@ fn metar_temp_dew() {
 
     assert_eq!(metar.temp, 15);
     assert_eq!(metar.dew, 10);
-
     assert_eq!(metar2.temp, -6);
     assert_eq!(metar2.dew, -6);
 }
@@ -193,7 +192,7 @@ fn metar_remarks() {
 #[test]
 fn metar_full_report() {
     let metar = ParsedMetar::parse_data("KSFO 160456Z AUTO 27024G33KT 280V300 10SM R28/4000FT/D +FG TSRA BKN008 OVC040 00/M08 A2992 RMK AO2").unwrap();
-    let utc = Utc::now(); // simulate metar was pulled now
+    let utc = Utc::now();
 
     assert_eq!(metar.station, "KSFO");
     assert_eq!(metar.time, Utc.ymd(utc.year(), utc.month(), 16).and_hms(4, 56, 0));
