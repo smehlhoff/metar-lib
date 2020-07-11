@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["smehlhoff"]
 description = "Parses latest METARs from NOAA Aviation Weather Center IAW FCM-H1-2019"
 repository = "https://github.com/smehlhoff/metar-lib"
+keywords = ["weather", "metar", "aviation"]
 readme = "README.md"
 license = "MIT"
 edition = "2018"
