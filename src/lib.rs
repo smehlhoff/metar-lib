@@ -111,11 +111,11 @@ impl ParsedMetar {
                     r"(?P<wind_variation>\d{3}V\d{3})?\s?",
                     r"(?P<vis>\d{4}|\d{1,3}SM|\d{1}\s\d{1}/\d{1}SM|\d{1}/\d{1}SM
                         |\d{1}\s\d{1}.\d+SM|\d{1}.\d+SM)?\s?",
-                    r"(?P<rvr>[A-Z]{1}\d{2}.+FT/[A-Z]{1})?\s?",
-                    r"(?P<weather>.+\s)",
+                    r"(?P<rvr>[A-Z]{1}\d{2}.+FT/[A-Z]{1}|[A-Z]{1}\d{2}.+FT)?\s?",
+                    r"(?P<weather>.+)?\s",
                     r"(?P<temp>\d{2}|M\d{2})/(?P<dew>\d{2}|M\d{2})\s",
                     r"(?P<alt>A\d{4})?\s?",
-                    r"(?P<remarks>RMK.+|RMK)",
+                    r"(?P<remarks>RMK.+|RMK)?",
                 ]
                 .join("");
 
@@ -247,7 +247,7 @@ impl ParsedMetar {
     }
 
     fn parse_weather(raw_weather: &str) -> Result<(Vec<String>, Vec<String>), Error> {
-        let mut raw_weather: Vec<&str> = raw_weather.split(' ').filter(|&x| x != "").collect();
+        let mut raw_weather: Vec<&str> = raw_weather.split(' ').collect();
         let mut clouds: Vec<String> = Vec::new();
 
         lazy_static! {
