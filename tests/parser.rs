@@ -22,26 +22,21 @@ fn metar_time() {
 
 #[test]
 fn metar_station_type() {
-    let metar =
-        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
-            .unwrap();
-    let metar2 = ParsedMetar::parse_data(
+    let metar = ParsedMetar::parse_data(
         "KSFO 160456Z AUTO 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
-    let metar3 = ParsedMetar::parse_data(
+    let metar2 = ParsedMetar::parse_data(
         "KSFO 160456Z COR 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
-    let metar4 = ParsedMetar::parse_data(
-        "KSFO 160456Z BBB 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2",
-    )
-    .unwrap();
+    let metar3 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
+            .unwrap();
 
-    assert_eq!(metar.station_type, "");
-    assert_eq!(metar2.station_type, "AUTO");
-    assert_eq!(metar3.station_type, "COR");
-    assert_eq!(metar4.station_type, "");
+    assert_eq!(metar.station_type, "AUTO");
+    assert_eq!(metar2.station_type, "COR");
+    assert_eq!(metar3.station_type, "");
 }
 
 #[test]
@@ -52,14 +47,16 @@ fn metar_wind() {
     let metar2 =
         ParsedMetar::parse_data("KSFO 160456Z VRB03KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-
     let metar3 =
         ParsedMetar::parse_data("KSFO 160456Z 00000KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
+    let metar4 =
+        ParsedMetar::parse_data("KSFO 160456Z 10SM FEW009 SCT200 15/10 A2999 RMK AO2").unwrap();
 
     assert_eq!(metar.wind, Wind { direction: 270, speed: 24, gust_speed: 33, variable_speed: 0 });
     assert_eq!(metar2.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 3 });
     assert_eq!(metar3.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 0 });
+    assert_eq!(metar4.wind, Wind { direction: 0, speed: 0, gust_speed: 0, variable_speed: 0 });
 }
 
 #[test]
@@ -68,62 +65,60 @@ fn metar_wind_variation() {
         "KSFO 160456Z 27024G33KT 280V300 10SM FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
+    let metar2 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
+            .unwrap();
 
     assert_eq!(metar.wind_variation, "280V300");
+    assert_eq!(metar2.wind_variation, "");
 }
 
 #[test]
 fn metar_vis() {
     let metar =
-        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 9999 FEW009 SCT200 15/10 A2999 RMK AO2")
-            .unwrap();
-    let metar2 =
-        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 100SM FEW009 SCT200 15/10 A2999 RMK AO2")
-            .unwrap();
-    let metar3 =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-    let metar4 =
+    let metar2 =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 1SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-    let metar5 = ParsedMetar::parse_data(
+    let metar3 = ParsedMetar::parse_data(
         "KSFO 160456Z 27024G33KT 1 1/2SM FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
-    let metar6 =
+    let metar4 =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 1/2SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-    let metar7 = ParsedMetar::parse_data(
-        "KSFO 160456Z 27024G33KT 1 1.5SM FEW009 SCT200 15/10 A2999 RMK AO2",
-    )
-    .unwrap();
-    let metar8 =
-        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 1.5SM FEW009 SCT200 15/10 A2999 RMK AO2")
+    let metar5 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 5/16SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-    let metar9 = ParsedMetar::parse_data(
-        "KSFO 160456Z 27024G33KT 1 1.75SM FEW009 SCT200 15/10 A2999 RMK AO2",
-    )
-    .unwrap();
+    let metar6 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT M1/4SM FEW009 SCT200 15/10 A2999 RMK AO2")
+            .unwrap();
+    let metar7 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT FEW009 SCT200 15/10 A2999 RMK AO2")
+            .unwrap();
 
-    assert_eq!(metar.vis, "9999");
-    assert_eq!(metar2.vis, "100");
-    assert_eq!(metar3.vis, "10");
-    assert_eq!(metar4.vis, "1");
-    assert_eq!(metar5.vis, "1 1/2");
-    assert_eq!(metar6.vis, "1/2");
-    assert_eq!(metar7.vis, "1 1.5");
-    assert_eq!(metar8.vis, "1.5");
-    assert_eq!(metar9.vis, "1 1.75");
+    assert_eq!(metar.vis, "10");
+    assert_eq!(metar2.vis, "1");
+    assert_eq!(metar3.vis, "1 1/2");
+    assert_eq!(metar4.vis, "1/2");
+    assert_eq!(metar5.vis, "5/16");
+    assert_eq!(metar6.vis, "< 1/4");
+    assert_eq!(metar7.vis, "");
 }
 
 #[test]
 fn metar_rvr() {
     let metar = ParsedMetar::parse_data(
-        "KSFO 160456Z 27024G33KT 10SM R28/4000FT/D FEW009 SCT200 15/10 A2999 RMK AO2",
+        "KSFO 160456Z 27024G33KT 10SM R28/4000FT FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
+    let metar2 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
+            .unwrap();
 
-    assert_eq!(metar.rvr, "R28/4000FT/D")
+    assert_eq!(metar.rvr, "R28/4000FT");
+    assert_eq!(metar2.rvr, "");
 }
 
 #[test]
@@ -141,12 +136,19 @@ fn metar_clouds() {
     let metar =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-
-    let metar2 =
+    let metar2 = ParsedMetar::parse_data(
+        "KSFO 160456Z 27024G33KT 10SM FEW005CB SCT050TCU OVC800 15/10 A2999 RMK AO2",
+    )
+    .unwrap();
+    let metar3 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM VV000 15/10 A2999 RMK AO2").unwrap();
+    let metar4 =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM CLR 15/10 A2999 RMK AO2").unwrap();
 
     assert_eq!(metar.clouds, vec!["FEW009", "SCT200"]);
-    assert_eq!(metar2.clouds, vec!["CLR"]);
+    assert_eq!(metar2.clouds, vec!["FEW005CB", "SCT050TCU", "OVC800"]);
+    assert_eq!(metar3.clouds, vec!["VV000"]);
+    assert_eq!(metar4.clouds, vec!["CLR"]);
 }
 
 #[test]
@@ -169,7 +171,6 @@ fn metar_alt() {
     let metar =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
             .unwrap();
-
     let metar2 = ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM CLR 15/10 RMK AO2").unwrap();
 
     assert_eq!(metar.alt, 2999);
@@ -184,14 +185,17 @@ fn metar_remarks() {
     let metar2 =
         ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK")
             .unwrap();
+    let metar3 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999").unwrap();
 
     assert_eq!(metar.remarks.len(), 1);
     assert_eq!(metar2.remarks.len(), 0);
+    assert_eq!(metar3.remarks.len(), 0);
 }
 
 #[test]
 fn metar_full_report() {
-    let metar = ParsedMetar::parse_data("KSFO 160456Z AUTO 27024G33KT 280V300 10SM R28/4000FT/D +FG TSRA BKN008 OVC040 00/M08 A2992 RMK AO2").unwrap();
+    let metar = ParsedMetar::parse_data("KSFO 160456Z AUTO 27024G33KT 280V300 10SM R28/4000FT +FG TSRA BKN008 OVC040 00/M08 A2992 RMK AO2").unwrap();
     let utc = Utc::now();
 
     assert_eq!(metar.station, "KSFO");
@@ -200,7 +204,7 @@ fn metar_full_report() {
     assert_eq!(metar.wind, Wind { direction: 270, speed: 24, gust_speed: 33, variable_speed: 0 });
     assert_eq!(metar.wind_variation, "280V300");
     assert_eq!(metar.vis, "10");
-    assert_eq!(metar.rvr, "R28/4000FT/D");
+    assert_eq!(metar.rvr, "R28/4000FT");
     assert_eq!(metar.weather, vec!["+FG", "TSRA"]);
     assert_eq!(metar.clouds, vec!["BKN008", "OVC040"]);
     assert_eq!(metar.temp, 0);
