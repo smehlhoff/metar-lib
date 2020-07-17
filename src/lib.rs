@@ -267,7 +267,6 @@ impl ParsedMetar {
                     r"|OVC\d{3}TCU",
                     r"|OVC\d{3}",
                     r"|VV\d{3}",
-                    r"|CAVOK",
                     r"|CLR",
                     r"|SKC)",
                 ]
