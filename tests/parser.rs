@@ -127,8 +127,12 @@ fn metar_weather() {
         "KSFO 160456Z 27024G33KT 10SM BR TSRA +HZ -FG FEW009 SCT200 15/10 A2999 RMK AO2",
     )
     .unwrap();
+    let metar2 =
+        ParsedMetar::parse_data("KSFO 160456Z 27024G33KT 10SM FEW009 SCT200 15/10 A2999 RMK AO2")
+            .unwrap();
 
     assert_eq!(metar.weather, vec!["BR", "TSRA", "+HZ", "-FG"]);
+    assert_eq!(metar2.weather.len(), 0);
 }
 
 #[test]
