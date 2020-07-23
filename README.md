@@ -4,7 +4,7 @@ Parses latest METARs from NOAA Aviation Weather Center IAW [FCM-H1-2019](https:/
 
 See [U.S. code groups](http://www.moratech.com/aviation/metar-class/metar-pg3.html#US) for more details.
 
-Do not use this library for real world navigation.
+Do not use this library for real-world navigation.
 
 ## Usage
 
